@@ -1,6 +1,5 @@
 name: API Security Automation
 
-# يشغّل على كل push أو pull request على main branch
 on:
   push:
     branches: [ master ]
@@ -12,15 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout الكود
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2️⃣ تثبيت Newman
       - name: Install Newman
         run: npm install -g newman
 
-      # 3️⃣ تشغيل الـ Postman Collection مع Environment
+      - name: Install Newman HTML Reporter
+        run: npm install -g newman-reporter-html
+
       - name: Run Security Tests
         run: |
           newman run API_Security.postman_collection.json \
@@ -28,9 +27,9 @@ jobs:
           -r cli,html \
           --reporter-html-export newman/report.html
 
-      # 4️⃣ رفع تقرير HTML كـ artifact (اختياري لكن مفيد)
       - name: Upload Newman HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: newman-report
           path: newman/report.html
+
