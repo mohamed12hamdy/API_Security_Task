@@ -1,35 +1,35 @@
-name: API Security Automation
+name: API Security Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
   pull_request:
-    branches: [ master ]
 
 jobs:
-  security-tests:
+  newman-tests:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
       - name: Install Newman
-        run: npm install -g newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-html
 
-      - name: Install Newman HTML Reporter
-        run: npm install -g newman-reporter-html
-
-      - name: Run Security Tests
+      - name: Run API Security Collection
         run: |
           newman run API_Security.postman_collection.json \
-          -e Bosta.postman_environment.json \
-          -r cli,html \
-          --reporter-html-export newman/report.html
+          --reporters cli,html \
+          --reporter-html-export report.html \
+          --suppress-exit-code
 
-      - name: Upload Newman HTML Report
-        uses: actions/upload-artifact@v4
+      - name: Upload Newman Report
+        uses: actions/upload-artifact@v3
         with:
           name: newman-report
-          path: newman/report.html
-
+          path: report.html
