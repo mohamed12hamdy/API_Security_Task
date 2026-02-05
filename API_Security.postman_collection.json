@@ -1,0 +1,1531 @@
+{
+  "info": {
+    "_postman_id": "0e04e7fa-63a3-4a37-9c24-23b2c9f91302",
+    "name": "API_Security",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28838129"
+  },
+  "item": [
+    {
+      "name": "Create-Pickup",
+      "item": [
+        {
+          "name": "Valid-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Does not allow multiple pickups per district per day\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"test name\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2038-06-30\",\r\n  \"numberOfParcels\": \"3\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Injection-attempt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check for injection vulnerability\", function () {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.success).to.be.a(\"boolean\");\r",
+                  "    pm.expect(res.message.toLowerCase()).to.not.include(\"sql\");\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"' OR '1'='1\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2050-06-30\",\r\n  \"numberOfParcels\": \"3\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Negative-parcels",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Number of parcels validation\", function () {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.success).to.eql(false);\r",
+                  "    pm.expect(res.message.toLowerCase()).to.include(\"parcels\");\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"test name\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2040-06-30\",\r\n  \"numberOfParcels\": \"-1\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Zero-parcels",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"test name\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2040-06-30\",\r\n  \"numberOfParcels\": \"0\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid-Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "pm.test(\"Invalid token is rejected\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{InvalidAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"test name\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2030-06-30\",\r\n  \"numberOfParcels\": \"3\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Past-Date",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Scheduled date cannot be in the past\", function () {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.errorCode).to.eql(1083);\r",
+                  "    pm.expect(res.success).to.eql(false);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"test name\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2025-06-30\",\r\n  \"numberOfParcels\": \"3\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicate-Pickup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Duplicate pickup handling\", function () {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res).to.have.property(\"success\");\r",
+                  "\r",
+                  "    pm.expect(res.message.toLowerCase()).to.include(\"district\");\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"test name\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2030-06-30\",\r\n  \"numberOfParcels\": \"3\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "No-Auth",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request without auth is blocked\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"businessLocationId\": \"MFqXsoFhxO\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"_sCFBrHGi\",\r\n    \"name\": \"test name\",\r\n    \"email\": \"amira.mosa+991^@bosta.co\",\r\n    \"phone\": \"+201055592829\"\r\n  },\r\n  \"scheduledDate\": \"2030-06-30\",\r\n  \"numberOfParcels\": \"3\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/pickups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "pickups"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Update-Bank-Info",
+      "item": [
+        {
+          "name": "Generate-Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Token generated successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "    pm.expect(res).to.have.property(\"token\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.set(\"bankAuthToken\", res.token);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/generate-token-for-interview-task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "generate-token-for-interview-task"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Valid-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Rejects short account numbers\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.success).to.eql(false);\r",
+                  "    pm.expect(res.message).to.include(\"length must be at least 12\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n    \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  },\r\n\r\n  \"paymentInfoOtp\": \"123\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Long-OTP-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check safe number validation\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData.message).to.eql(\"paymentInfoOtp must be a safe number\");\r",
+                  "    pm.expect(jsonData.errorCode).to.eql(777);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n    \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  },\r\n  \"paymentInfoOtp\": \"123456789123456789158974102122222222222222222222222222222222\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Character-OTP-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check paymentInfoOtp must be a number\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData.message).to.eql(\"paymentInfoOtp must be a number\");\r",
+                  "    pm.expect(jsonData.errorCode).to.eql(777);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n    \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  },\r\n  \"paymentInfoOtp\": \"m\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NO-OTP-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check paymentInfoOtp is required\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData.message).to.include(\"paymentInfoOtp\");\r",
+                  "    pm.expect(jsonData.errorCode).to.eql(777);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n    \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  }\r\n\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update-without-token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check invalid authorization token or API key\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData.message).to.eql(\"Invalid authorization token or API key.\");\r",
+                  "    pm.expect(jsonData.errorCode).to.eql(1028);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n    \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  },\r\n  \"paymentInfoOtp\": \"123\"\r\n\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Payload-Tampering",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Unauthorized isAdmin field is rejected\", function () {\r",
+                  "    pm.expect(res.success).to.eql(false);\r",
+                  "    pm.expect(res.message).to.contain(\"not authorized\");\r",
+                  "    pm.expect(res.message).to.contain(\"isAdmin\");\r",
+                  "    pm.expect(res.errorCode).to.eql(1007);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n    \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  },\r\n  \"paymentInfoOtp\": \"123\",\r\n  \"isAdmin\": true\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BeneficiaryName-Injection",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Request failed before XSS validation (OTP validation)\", function () {\r",
+                  "    pm.expect(res.success).to.eql(false);\r",
+                  "    pm.expect(res.message).to.contain(\"OTP\");\r",
+                  "});\r",
+                  "///it means it did not validate the beneficiaryName"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n   \"beneficiaryName\": \"<script>alert(1)</script>\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  },\r\n  \"paymentInfoOtp\": \"123\"\r\n  \r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AccountNumber-LessThan12",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Check error message\r",
+                  "pm.test(\"Error message should indicate invalid account number length\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.message).to.include(\r",
+                  "        \"bankInfo.accountNumber length must be at least 12 characters\"\r",
+                  "    );\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n   \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789\",\r\n    \"ibanNumber\": \"EG123456789012345678901234567\"\r\n  },\r\n  \"paymentInfoOtp\": \"123\"\r\n  \r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "IbanNumber-LessThan27",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "// Check error message\r",
+                  "pm.test(\"Error message should indicate invalid account number length\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.message).to.include(\r",
+                  "        \"Invalid IBAN format. IBAN must start with \\\"EG\\\" followed by 27 digits.\"\r",
+                  "    );\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{bankAuthToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"bankInfo\": {\r\n   \"beneficiaryName\": \"test Name\",\r\n    \"bankName\": \"NBG\",\r\n    \"accountNumber\": \"123456789012\",\r\n    \"ibanNumber\": \"EG1\"\r\n  },\r\n  \"paymentInfoOtp\": \"123\"\r\n  \r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/businesses/add-bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "businesses",
+                "add-bank-info"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Forget-Password",
+      "item": [
+        {
+          "name": "Valid-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 201\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Generic success message returned\", function () {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.success).to.eql(true);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"mohamed2022001m@gmail.com\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/forget-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Null-email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or 422\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains validation error\", function () {\r",
+                  "    pm.expect(pm.response.text().toLowerCase()).to.include(\"email\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"null\"\r\n}\r\n\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/forget-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Valid-Request-no-token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request works without authorization\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"mohamed2022001m@gmail.com\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/forget-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Email-injection-attempt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request handled safely without server error\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 400, 422]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No system or SQL details exposed\", function () {\r",
+                  "    const body = pm.response.text().toLowerCase();\r",
+                  "    pm.expect(body).to.not.include(\"sql\");\r",
+                  "    pm.expect(body).to.not.include(\"syntax\");\r",
+                  "    pm.expect(body).to.not.include(\"database\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"test' OR '1'='1@example.com\"\r\n}\r\n\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/forget-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid-email-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "pm.test(\"Status code is 400 or 422\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains validation error message\", function () {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.message.toLowerCase()).to.include(\"email\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"amira\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/forget-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Empty-email-Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "pm.test(\"Status code is 400 or 422\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains validation error message\", function () {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.message.toLowerCase()).to.include(\"email\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/forget-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "forget-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
