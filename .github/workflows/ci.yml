@@ -30,7 +30,7 @@ jobs:
 
       # 4️⃣ رفع تقرير HTML كـ artifact (اختياري لكن مفيد)
       - name: Upload Newman HTML Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: newman-report
           path: newman/report.html
