@@ -9,27 +9,31 @@ jobs:
   newman-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Newman
+      - name: Install Newman and Reporter
         run: |
           npm install -g newman
           npm install -g newman-reporter-html
 
       - name: Run API Security Collection
         run: |
+          # تشغيل الـ collection بدون --suppress-exit-code عشان نشوف الفشل مباشرة
           newman run API_Security.postman_collection.json \
-          --reporters cli,html \
-          --reporter-html-export report.html \
-          --suppress-exit-code
+            -e Bosta.postman_environment.json \
+            --reporters cli,html \
+            --reporter-html-export report.html
 
-      - name: Upload Newman Report
+      - name: Upload Newman HTML Report
+        if: always()  # هيرفع التقرير حتى لو الفشل حصل
         uses: actions/upload-artifact@v4
         with:
           name: newman-report
           path: report.html
+
