@@ -1,0 +1,17 @@
+name: API Security Automation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  security-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Security Tests
+        run: newman run API_Security.postman_collection.json -e Bosta.postman_environment.json -r cli,html
