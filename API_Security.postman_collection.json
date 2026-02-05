@@ -17,6 +17,7 @@
               "script": {
                 "exec": [
                   "\r",
+                  "\r",
                   "pm.test(\"Does not allow multiple pickups per district per day\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
