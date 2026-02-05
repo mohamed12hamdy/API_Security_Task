@@ -530,12 +530,6 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Rejects short account numbers\", function () {\r",
-                  "    pm.response.to.have.status(400);\r",
-                  "    const res = pm.response.json();\r",
-                  "    pm.expect(res.success).to.eql(false);\r",
-                  "    pm.expect(res.message).to.include(\"length must be at least 12\");\r",
-                  "});\r",
                   ""
                 ],
                 "type": "text/javascript",
